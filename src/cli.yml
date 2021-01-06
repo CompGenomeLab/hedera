@@ -1,0 +1,81 @@
+name: hedera
+version: "0.1.0"
+author: Ümit Akköse <umieat@gmail.com>
+about: This tool creates a profile plot for scores over sets of genomic regions. Typically, these regions are genes, but any other regions defined in BED will work.
+subcommands:
+    - reference-point:
+          about: "Reference-point refers to a position within a BED region (e.g., the starting point). In this mode, only those genomic positions before (upstream) and/or after (downstream) of the reference point will be plotted."
+          args:
+              - relative:
+                    long: relative
+                    help: Plot scores of first reads relative to second reads (For each bin value of first reads will be divided by value of second reads)
+              - regions:
+                    short: R
+                    long: regions
+                    takes_value: true
+                    value_name: FILE
+                    required: true
+                    help: bed file containing regions to plot.
+                    # help: bed file(s) containing regions to plot. If multiple bed files are given, each one is considered a group that can be plotted separately. Multiple files should be separated by space.
+              - reads:
+                    short: S
+                    long: reads
+                    multiple: true
+                    takes_value: true
+                    value_name: FILE
+                    required: true
+                    help: bed file(s) containing the reads to be plotted. If multiple bed files are given, each one will be plotted as seperate line. Multiple files should be separated by space.
+              - referencePoint:
+                    long: referencePoint
+                    takes_value: true
+                    possible_values:
+                        - start
+                        - end
+                        - center
+                    default_value: center
+                    help: The reference point for the plotting could be either the region start, the region end or the center of the region.
+              - upstream:
+                    short: b
+                    long: upstream
+                    takes_value: true
+                    value_name: INT
+                    default_value: "500"
+                    help: Distance upstream of the reference-point selected.
+              - downstream:
+                    short: a
+                    long: downstream
+                    takes_value: true
+                    value_name: INT
+                    default_value: "500"
+                    help: Distance downstream of the reference-point selected.
+              - binSize:
+                    long: binSize
+                    takes_value: true
+                    value_name: INT
+                    default_value: "10"
+                    help: Length, in bases, of the non-overlapping bins for averaging the score over the regions length.
+              - outFileName:
+                    short: O
+                    long: outFileName
+                    takes_value: true
+                    value_name: FILE
+                    required: true
+                    help: File name to save the plot.
+              - plotTitle:
+                    long: plotTitle
+                    takes_value: true
+                    help: "Title of the plot [default: name of the regions file]"
+              - plotHeight:
+                    long: plotHeight
+                    takes_value: true
+                    value_name: INT
+                    default_value: "720"
+                    help: Height of the plot
+              - plotWidth:
+                    long: plotWidth
+                    takes_value: true
+                    value_name: INT
+                    default_value: "1280"
+                    help: Width of the plot
+    # - scale-regions:
+    #     about: Not implemented!
