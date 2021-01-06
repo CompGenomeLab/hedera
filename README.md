@@ -84,7 +84,7 @@ hedera reference-point \
 
 ## Installation
 
-Prebuilt binaries for macOS and Linux can be downloaded from the [GitHub releases page](https://github.com/umieat/hedera/releases).
+Prebuilt binaries for macOS and Linux can be downloaded from the [GitHub releases page](https://github.com/CompGenomeLab/hedera/releases).
 
 hedera is written in Rust, so you'll need to grab a [Rust installation](https://www.rust-lang.org/) in order to install or compile it with `cargo`.
 
