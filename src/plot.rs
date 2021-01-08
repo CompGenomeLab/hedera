@@ -24,7 +24,7 @@ pub struct PlotInfo {
     pub size: (u32, u32),
 }
 
-pub fn plot(
+pub fn plot_profile(
     input: &[(Vec<f64>, &str)],
     left: u64,
     right: u64,
@@ -41,7 +41,7 @@ pub fn plot(
         .float_min();
     let root = BitMapBackend::new(plot_info.path.as_str(), plot_info.size).into_drawing_area();
     root.fill(&WHITE)?;
-    // TODO: Change x-axis to integer values
+    // TODO: Custom x-axis
     let mut chart = ChartBuilder::on(&root)
         .caption(plot_info.title.as_str(), ("Arial", 15).into_font())
         .margin(30)
@@ -55,79 +55,18 @@ pub fn plot(
     chart.configure_mesh().light_line_style(&WHITE).draw()?;
 
     for (line_index, line) in input.iter().enumerate() {
-        // TODO: Find a way of setting color of legend dynamically
-        match line_index {
-            0 => {
-                chart
-                    .draw_series(LineSeries::new(
-                        line.0[1..line.0.len() - 1]
-                            .iter()
-                            .enumerate()
-                            .map(|(x, y)| ((((x + 1) as f64 * bs as f64) - left as f64), *y)),
-                        &Palette99::pick(0),
-                    ))?
-                    .label(line.1)
-                    .legend(|(x, y)| {
-                        PathElement::new(vec![(x, y), (x + 20, y)], &Palette99::pick(0))
-                    });
-            }
-            1 => {
-                chart
-                    .draw_series(LineSeries::new(
-                        line.0[1..line.0.len() - 1]
-                            .iter()
-                            .enumerate()
-                            .map(|(x, y)| ((((x + 1) as f64 * bs as f64) - left as f64), *y)),
-                        &Palette99::pick(1),
-                    ))?
-                    .label(line.1)
-                    .legend(|(x, y)| {
-                        PathElement::new(vec![(x, y), (x + 20, y)], &Palette99::pick(1))
-                    });
-            }
-            2 => {
-                chart
-                    .draw_series(LineSeries::new(
-                        line.0[1..line.0.len() - 1]
-                            .iter()
-                            .enumerate()
-                            .map(|(x, y)| ((((x + 1) as f64 * bs as f64) - left as f64), *y)),
-                        &Palette99::pick(2),
-                    ))?
-                    .label(line.1)
-                    .legend(|(x, y)| {
-                        PathElement::new(vec![(x, y), (x + 20, y)], &Palette99::pick(2))
-                    });
-            }
-            3 => {
-                chart
-                    .draw_series(LineSeries::new(
-                        line.0[1..line.0.len() - 1]
-                            .iter()
-                            .enumerate()
-                            .map(|(x, y)| ((((x + 1) as f64 * bs as f64) - left as f64), *y)),
-                        &Palette99::pick(3),
-                    ))?
-                    .label(line.1)
-                    .legend(|(x, y)| {
-                        PathElement::new(vec![(x, y), (x + 20, y)], &Palette99::pick(3))
-                    });
-            }
-            _ => {
-                chart
-                    .draw_series(LineSeries::new(
-                        line.0[1..line.0.len() - 1]
-                            .iter()
-                            .enumerate()
-                            .map(|(x, y)| ((((x + 1) as f64 * bs as f64) - left as f64), *y)),
-                        &Palette99::pick(0),
-                    ))?
-                    .label(line.1)
-                    .legend(|(x, y)| {
-                        PathElement::new(vec![(x, y), (x + 20, y)], &Palette99::pick(0))
-                    });
-            }
-        };
+        chart
+            .draw_series(LineSeries::new(
+                line.0[1..line.0.len() - 1]
+                    .iter()
+                    .enumerate()
+                    .map(|(x, y)| ((((x + 1) as f64 * bs as f64) - left as f64), *y)),
+                &Palette99::pick(line_index),
+            ))?
+            .label(line.1)
+            .legend(move |(x, y)| {
+                PathElement::new(vec![(x, y), (x + 20, y)], &Palette99::pick(line_index))
+            });
     }
 
     chart

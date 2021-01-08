@@ -12,7 +12,6 @@ fn main() -> anyhow::Result<()> {
     match matches.subcommand() {
         Some(("reference-point", sub_m)) => {
             let regions: &str = sub_m.value_of("regions").unwrap();
-            // TODO: Handle multiple reads files
             let reads: Vec<&str> = sub_m.values_of("reads").unwrap().collect();
             let up: u64 = sub_m.value_of_t("upstream").unwrap();
             let down: u64 = sub_m.value_of_t("downstream").unwrap();
@@ -29,8 +28,7 @@ fn main() -> anyhow::Result<()> {
             let plot_height: u32 = sub_m.value_of_t("plotHeight").unwrap();
             let plot_width: u32 = sub_m.value_of_t("plotWidth").unwrap();
 
-            // TODO: Required because of plotters handling of labels lifetime
-            // Relative mode simply dicide values of first read to values of second read
+            // TODO: Allow more than 2 reads for relative mode
             if sub_m.is_present("relative") {
                 if reads.len() == 2 {
                     let mut plot_data = Vec::new();
@@ -69,12 +67,9 @@ fn main() -> anyhow::Result<()> {
                         title: plot_title.to_string(),
                         size: (plot_width, plot_height),
                     };
-                    plot::plot(&plot_data, up, down, bin_size, plot_info)?;
-                } else {
-                    return Err(anyhow!("Only 2 reads are supported in relative mode"));
+                    plot::plot_profile(&plot_data, up, down, bin_size, plot_info)?;
                 }
-            } else if reads.len() > 4 {
-                return Err(anyhow!("At most 4 reads are supported for now"));
+                return Err(anyhow!("Only 2 reads are supported in relative mode"));
             } else {
                 let mut plot_data = Vec::new();
                 for read in reads {
@@ -97,7 +92,7 @@ fn main() -> anyhow::Result<()> {
                     title: plot_title.to_string(),
                     size: (plot_width, plot_height),
                 };
-                plot::plot(&plot_data, up, down, bin_size, plot_info)?;
+                plot::plot_profile(&plot_data, up, down, bin_size, plot_info)?;
             }
         }
         // Some(("scale-regions", _sub_m)) => {
