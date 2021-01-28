@@ -68,8 +68,9 @@ fn main() -> anyhow::Result<()> {
                         size: (plot_width, plot_height),
                     };
                     plot::plot_profile(&plot_data, up, down, bin_size, plot_info)?;
+                } else {
+                    return Err(anyhow!("Only 2 reads are supported in relative mode"));
                 }
-                return Err(anyhow!("Only 2 reads are supported in relative mode"));
             } else {
                 let mut plot_data = Vec::new();
                 for read in reads {
