@@ -17,11 +17,19 @@ where
         self.fold(f64::NAN, f64::min)
     }
 }
-// TODO: Change fields to &str
 pub struct PlotInfo {
     pub path: String,
     pub title: String,
     pub size: (u32, u32),
+    pub reference_point: String,
+}
+
+fn fmt_x(v: &f64, rp: &str) -> String {
+    if *v == 0f64 {
+        rp.to_string()
+    } else {
+        format!("{}", v)
+    }
 }
 
 pub fn plot_profile(
@@ -41,9 +49,9 @@ pub fn plot_profile(
         .float_min();
     let root = BitMapBackend::new(plot_info.path.as_str(), plot_info.size).into_drawing_area();
     root.fill(&WHITE)?;
-    // TODO: Custom x-axis
+    
     let mut chart = ChartBuilder::on(&root)
-        .caption(plot_info.title.as_str(), ("Arial", 15).into_font())
+        .caption(plot_info.title.as_str(), ("Arial", 25).into_font())
         .margin(30)
         .x_label_area_size(30)
         .y_label_area_size(30)
@@ -52,7 +60,15 @@ pub fn plot_profile(
             y_low..y_high + (y_high - y_low) / 10f64,
         )?;
 
-    chart.configure_mesh().light_line_style(&WHITE).draw()?;
+    chart
+        .configure_mesh()
+        .label_style(("Arial", 15).into_font())
+        // .x_desc(plot_info.x_axis_label)
+        // .y_desc(plot_info.y_axis_label)
+        // .axis_desc_style(("Arial", 20).into_font())
+        .x_label_formatter(&|v| fmt_x(v, plot_info.reference_point.as_str()))
+        .light_line_style(&WHITE)
+        .draw()?;
 
     for (line_index, line) in input.iter().enumerate() {
         chart
@@ -71,6 +87,7 @@ pub fn plot_profile(
 
     chart
         .configure_series_labels()
+        .position(SeriesLabelPosition::UpperRight)
         .background_style(&WHITE.mix(0.8))
         .border_style(&BLACK)
         .draw()?;

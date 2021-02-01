@@ -16,7 +16,7 @@ fn main() -> anyhow::Result<()> {
             let up: u64 = sub_m.value_of_t("upstream").unwrap();
             let down: u64 = sub_m.value_of_t("downstream").unwrap();
             let bin_size: usize = sub_m.value_of_t("binSize").unwrap();
-            let referance_point = sub_m.value_of("referencePoint").unwrap();
+            let reference_point = sub_m.value_of("referencePoint").unwrap();
             let plot_path = sub_m.value_of("outFileName").unwrap();
             let plot_title = sub_m.value_of("plotTitle").unwrap_or(
                 Path::new(regions)
@@ -28,12 +28,19 @@ fn main() -> anyhow::Result<()> {
             let plot_height: u32 = sub_m.value_of_t("plotHeight").unwrap();
             let plot_width: u32 = sub_m.value_of_t("plotWidth").unwrap();
 
+            let plot_info = plot::PlotInfo {
+                path: plot_path.to_string(),
+                title: plot_title.to_string(),
+                size: (plot_width, plot_height),
+                reference_point: reference_point.to_string(),
+            };
+
             // TODO: Allow more than 2 reads for relative mode
             if sub_m.is_present("relative") {
                 if reads.len() == 2 {
                     let mut plot_data = Vec::new();
                     let extended_regions_0 =
-                        parser::extend_reads(regions, referance_point, up, down)?;
+                        parser::extend_reads(regions, reference_point, up, down)?;
                     let intersect_0 = parser::intersect(extended_regions_0.as_str(), reads[0])?;
                     let coverage_0 = parser::coverage(intersect_0.as_str(), up, down)?;
                     let norm_reads_0 = parser::normalize(&coverage_0, reads[0], regions, bin_size)?;
@@ -44,7 +51,7 @@ fn main() -> anyhow::Result<()> {
                         .unwrap();
 
                     let extended_regions_1 =
-                        parser::extend_reads(regions, referance_point, up, down)?;
+                        parser::extend_reads(regions, reference_point, up, down)?;
                     let intersect_1 = parser::intersect(extended_regions_1.as_str(), reads[1])?;
                     let coverage_1 = parser::coverage(intersect_1.as_str(), up, down)?;
                     let norm_reads_1 = parser::normalize(&coverage_1, reads[1], regions, bin_size)?;
@@ -62,11 +69,6 @@ fn main() -> anyhow::Result<()> {
                     let plot_label = format!("{} / {}", plot_label_0, plot_label_1);
                     plot_data.push((norm_reads, plot_label.as_str()));
 
-                    let plot_info = plot::PlotInfo {
-                        path: plot_path.to_string(),
-                        title: plot_title.to_string(),
-                        size: (plot_width, plot_height),
-                    };
                     plot::plot_profile(&plot_data, up, down, bin_size, plot_info)?;
                 } else {
                     return Err(anyhow!("Only 2 reads are supported in relative mode"));
@@ -75,7 +77,7 @@ fn main() -> anyhow::Result<()> {
                 let mut plot_data = Vec::new();
                 for read in reads {
                     let extended_regions =
-                        parser::extend_reads(regions, referance_point, up, down)?;
+                        parser::extend_reads(regions, reference_point, up, down)?;
                     let intersect = parser::intersect(extended_regions.as_str(), read)?;
                     let coverage = parser::coverage(intersect.as_str(), up, down)?;
                     let norm_reads = parser::normalize(&coverage, read, regions, bin_size)?;
@@ -87,12 +89,6 @@ fn main() -> anyhow::Result<()> {
                     plot_data.push((norm_reads, plot_label));
                 }
 
-                // TODO: Get more info about plot maybe without arguments
-                let plot_info = plot::PlotInfo {
-                    path: plot_path.to_string(),
-                    title: plot_title.to_string(),
-                    size: (plot_width, plot_height),
-                };
                 plot::plot_profile(&plot_data, up, down, bin_size, plot_info)?;
             }
         }
