@@ -1,5 +1,5 @@
 name: hedera
-version: "0.1.0"
+version: "0.1.1"
 author: Ümit Akköse <umieat@gmail.com>
 about: This tool creates a profile plot for scores over sets of genomic regions. Typically, these regions are genes, but any other regions defined in BED will work.
 subcommands:

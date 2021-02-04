@@ -4,7 +4,6 @@ This tool creates a profile plot for scores over sets of genomic regions. Typica
 
 ## Usage
 
-**NOTE: Currently `hedera` requires `bedtools` to be available at `$PATH`**
 
 ```
 hedera 0.1.0
