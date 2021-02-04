@@ -6,7 +6,7 @@ This tool creates a profile plot for scores over sets of genomic regions. Typica
 
 
 ```
-hedera 0.1.0
+hedera 0.1.1
 Ümit Akköse <umieat@gmail.com>
 This tool creates a profile plot for scores over sets of genomic regions. Typically, these regions
 are genes, but any other regions defined in BED will work.
@@ -100,5 +100,5 @@ $ git clone https://github.com/CompGenomeLab/hedera.git
 $ cd hedera
 $ cargo build --release
 $ ./target/release/hedera --version
-0.1.0
+0.1.1
 ```
