@@ -49,9 +49,9 @@ pub fn plot_profile(
         .float_min();
     let root = BitMapBackend::new(plot_info.path.as_str(), plot_info.size).into_drawing_area();
     root.fill(&WHITE)?;
-    
+
     let mut chart = ChartBuilder::on(&root)
-        .caption(plot_info.title.as_str(), ("Arial", 25).into_font())
+        .caption(plot_info.title.as_str(), ("Arial", 20).into_font())
         .margin(30)
         .x_label_area_size(30)
         .y_label_area_size(30)

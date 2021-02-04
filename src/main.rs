@@ -39,10 +39,8 @@ fn main() -> anyhow::Result<()> {
             if sub_m.is_present("relative") {
                 if reads.len() == 2 {
                     let mut plot_data = Vec::new();
-                    let extended_regions_0 =
-                        parser::extend_reads(regions, reference_point, up, down)?;
-                    let intersect_0 = parser::intersect(extended_regions_0.as_str(), reads[0])?;
-                    let coverage_0 = parser::coverage(intersect_0.as_str(), up, down)?;
+                    let intersects = parser::intersect(regions, &reads, reference_point, up, down)?;
+                    let coverage_0 = parser::coverage(&intersects[0], up, down)?;
                     let norm_reads_0 = parser::normalize(&coverage_0, reads[0], regions, bin_size)?;
                     let plot_label_0 = Path::new(reads[0])
                         .file_stem()
@@ -50,10 +48,7 @@ fn main() -> anyhow::Result<()> {
                         .to_str()
                         .unwrap();
 
-                    let extended_regions_1 =
-                        parser::extend_reads(regions, reference_point, up, down)?;
-                    let intersect_1 = parser::intersect(extended_regions_1.as_str(), reads[1])?;
-                    let coverage_1 = parser::coverage(intersect_1.as_str(), up, down)?;
+                    let coverage_1 = parser::coverage(&intersects[1], up, down)?;
                     let norm_reads_1 = parser::normalize(&coverage_1, reads[1], regions, bin_size)?;
                     let plot_label_1 = Path::new(reads[1])
                         .file_stem()
@@ -75,15 +70,14 @@ fn main() -> anyhow::Result<()> {
                 }
             } else {
                 let mut plot_data = Vec::new();
-                for read in reads {
-                    let extended_regions =
-                        parser::extend_reads(regions, reference_point, up, down)?;
-                    let intersect = parser::intersect(extended_regions.as_str(), read)?;
-                    let coverage = parser::coverage(intersect.as_str(), up, down)?;
-                    let norm_reads = parser::normalize(&coverage, read, regions, bin_size)?;
-                    let plot_label = Path::new(read)
+                let intersects = parser::intersect(regions, &reads, reference_point, up, down)?;
+
+                for (i, intersect) in intersects.iter().enumerate() {
+                    let coverage = parser::coverage(intersect, up, down)?;
+                    let norm_reads = parser::normalize(&coverage, reads[i], regions, bin_size)?;
+                    let plot_label = Path::new(reads[i])
                         .file_stem()
-                        .with_context(|| format!("{} is not a file", read))?
+                        .with_context(|| format!("{} is not a file", reads[i]))?
                         .to_str()
                         .unwrap();
                     plot_data.push((norm_reads, plot_label));
