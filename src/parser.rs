@@ -14,7 +14,14 @@ struct BED<'a> {
     chrom: &'a str,
     start: u64,
     stop: u64,
+    #[serde(default = "BED::rest_default")]
     rest: Vec<&'a str>,
+}
+
+impl<'a> BED<'a> {
+    const fn rest_default() -> Vec<&'a str> {
+        vec![]
+    }
 }
 
 type Iv = Interval<u64, char>;
@@ -42,6 +49,8 @@ pub fn intersect(
     let mut regions_reader = ReaderBuilder::new()
         .delimiter(b'\t')
         .has_headers(false)
+        .flexible(true)
+        .trim(csv::Trim::All)
         .from_path(regions)?;
 
     let mut regions_map: HashMap<String, Vec<Iv>> = HashMap::new();
@@ -88,6 +97,8 @@ pub fn intersect(
         let mut read_reader = ReaderBuilder::new()
             .delimiter(b'\t')
             .has_headers(false)
+            .flexible(true)
+            .trim(csv::Trim::All)
             .from_path(read)?;
         let mut read_map: HashMap<String, Vec<Iv>> = HashMap::new();
         for el in read_reader.records() {
