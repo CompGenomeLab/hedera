@@ -71,13 +71,14 @@ pub fn plot_profile(
         .draw()?;
 
     for (line_index, line) in input.iter().enumerate() {
+        let color = &Palette99::pick(line_index);
         chart
             .draw_series(LineSeries::new(
                 line.0[1..line.0.len() - 1]
                     .iter()
                     .enumerate()
                     .map(|(x, y)| ((((x + 1) as f64 * bs as f64) - left as f64), *y)),
-                &Palette99::pick(line_index),
+                color.stroke_width(3),
             ))?
             .label(line.1)
             .legend(move |(x, y)| {
